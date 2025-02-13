@@ -28,6 +28,7 @@ static void matrix_del(matrix_t matrix, int size)
     }
 }
 
+#ifdef PRINT
 static void matrix_print(matrix_t matrix, int size)
 {
     int i, j;
@@ -39,29 +40,38 @@ static void matrix_print(matrix_t matrix, int size)
         printf("\n");
     }
 }
+#endif
 
-static matrix_t matrix_multiply(matrix_t a, matrix_t b, int size)
+static int matrix_multiplication_cost(matrix_t a, matrix_t b, int size)
 {
     int i, j, k;
+    int counter = 0;
 
     matrix_t c = malloc(sizeof(*c) * size);
     for (i = 0; i < size; i++) {
         c[i] = malloc(sizeof(*c[i]) * size);
 
         for (j = 0; j < size; j++) {
-            c[i][j] = 0;
+            c[i][j] = 0; counter++;
+
             for (k = 0; k < size; k++) {
-                c[i][j] += a[i][k] * b[k][j];
+                c[i][j] += a[i][k] * b[k][j]; counter += 3;
             }
         }
     }
-    return c;
+
+#ifdef PRINT
+    matrix_print(c, size);
+#endif
+
+    matrix_del(c, size); free(c);
+    return counter;
 }
 
 int main(int argc, char **argv)
 {
-    int size;
-    matrix_t a, b, c;
+    int size, cost;
+    matrix_t a, b;
 
     if (argc != 2) {
         fprintf(stderr, "Expected: %s <size>\n", argv[0]);
@@ -73,19 +83,19 @@ int main(int argc, char **argv)
     a = matrix_init(size);
     b = matrix_init(size);
 
+#ifdef PRINT
     matrix_print(a, size);
     printf("\n");
     matrix_print(b, size);
     printf("\n");
+#endif
 
-    c = matrix_multiply(a, b, size);
-    matrix_print(c, size);
+    cost = matrix_multiplication_cost(a, b, size);
+#ifndef PRINT
+    printf("%d\n", cost);
+#endif
 
-    matrix_del(a, size);
-    free(a);
-    matrix_del(b, size);
-    free(b);
-    matrix_del(c, size);
-    free(c);
+    matrix_del(a, size); free(a);
+    matrix_del(b, size); free(b);
     return 0;
 }
