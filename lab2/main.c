@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef int *array;
 
@@ -15,12 +16,29 @@ static array array_init_random(int size)
     return arr;
 }
 
-static void array_print(array arr, int size)
+static void array_print(const array arr, int size)
 {
     int i;
 
     for (i = 0; i < size; i++) {
         printf(" %3d", arr[i]);
+    }
+}
+
+static void array_sort(array arr, int size)
+{
+    int i;
+
+    for (i = 1; i < size; i++) {
+        int key, j;
+
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
     }
 }
 
@@ -35,7 +53,12 @@ int main(int argc, char **argv)
     }
     size = atoi(argv[1]);
 
+    srand(time(NULL));
     arr = array_init_random(size);
+    array_print(arr, size);
+    printf("\n");
+
+    array_sort(arr, size);
     array_print(arr, size);
     printf("\n");
 
