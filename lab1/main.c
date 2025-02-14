@@ -29,7 +29,7 @@ static void matrix_del(matrix_t matrix, int size)
 }
 
 #ifdef PRINT
-static void matrix_print(matrix_t matrix, int size)
+static void matrix_print(const matrix_t matrix, int size)
 {
     int i, j;
 
@@ -42,7 +42,8 @@ static void matrix_print(matrix_t matrix, int size)
 }
 #endif
 
-static int matrix_multiplication_cost(matrix_t a, matrix_t b, int size)
+static int matrix_multiplication_cost(const matrix_t a, const matrix_t b,
+                                      int size)
 {
     int i, j, k;
     int counter = 0;
