@@ -3,17 +3,37 @@
 #include <time.h>
 
 typedef int *array;
+typedef int (*array_generator)();
 
-static array array_init_random(int size)
+static array array_init(array_generator generator, int size)
 {
     int i;
     array arr = malloc(sizeof(*arr) * size);
 
     for (i = 0; i < size; i++) {
-        arr[i] = rand() % 100;
+        arr[i] = generator();
     }
 
     return arr;
+}
+
+static int array_random_generator()
+{
+    return random() % 1000 - 500;
+}
+
+static int array_increasing_generator()
+{
+    static int number = 0;
+    number++;
+    return number - 1;
+}
+
+static int array_decreasing_generator()
+{
+    static int number = 0;
+    number--;
+    return number + 1;
 }
 
 #ifdef PRINT
@@ -22,7 +42,7 @@ static void array_print(const array arr, int size)
     int i;
 
     for (i = 0; i < size; i++) {
-        printf(" %3d", arr[i]);
+        printf(" %4d", arr[i]);
     }
 }
 #endif
@@ -47,19 +67,11 @@ static int array_sort_cost(array arr, int size)
     return counter;
 }
 
-int main(int argc, char **argv)
+static void sort_generated_array(array_generator generator, int size)
 {
-    array arr;
-    int size, cost;
+    int cost;
+    array arr = array_init(generator, size);
 
-    if (argc != 2) {
-        fprintf(stderr, "Expected: %s <size>\n", argv[0]);
-        return 1;
-    }
-    size = atoi(argv[1]);
-
-    srand(time(NULL));
-    arr = array_init_random(size);
 #ifdef PRINT
     array_print(arr, size);
     printf("\n");
@@ -74,5 +86,22 @@ int main(int argc, char **argv)
 #endif
 
     free(arr);
+}
+
+int main(int argc, char **argv)
+{
+    int size;
+
+    if (argc != 2) {
+        fprintf(stderr, "Expected: %s <size>\n", argv[0]);
+        return 1;
+    }
+    size = atoi(argv[1]);
+
+    srand(time(NULL));
+
+    sort_generated_array(array_increasing_generator, size);
+    sort_generated_array(array_random_generator, size);
+    sort_generated_array(array_decreasing_generator, size);
     return 0;
 }
