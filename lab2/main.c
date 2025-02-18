@@ -100,8 +100,12 @@ int main(int argc, char **argv)
 
     srand(time(NULL));
 
+#ifdef MIN_TIME
     sort_generated_array(array_increasing_generator, size);
-    sort_generated_array(array_random_generator, size);
+#elifdef MAX_TIME
     sort_generated_array(array_decreasing_generator, size);
+#else
+    sort_generated_array(array_random_generator, size);
+#endif
     return 0;
 }
