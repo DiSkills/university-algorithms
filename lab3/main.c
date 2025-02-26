@@ -47,42 +47,47 @@ static void array_print(const array arr, int size)
 }
 #endif
 
-static void array_sort(array arr, int first, int last)
+static int array_sort_cost(array arr, int first, int last)
 {
     int i, j, x;
+    int counter = 0;
 
-    i = first;
-    j = last;
-    x = arr[(first + last) / 2];
+    i = first; counter++;
+    j = last; counter++;
+    x = arr[(first + last) / 2]; counter += 3;
     do {
-        while (arr[i] < x) {
-            i++;
-        }
-        while (arr[j] > x) {
-            j--;
-        }
+        while (arr[i] < x) { counter++;
+            i++; counter++;
+        } counter++;
+        while (arr[j] > x) { counter++;
+            j--; counter++;
+        } counter++;
 
         if (i <= j) {
             if (i < j) {
-                int tmp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = tmp;
-            }
-            i++;
-            j--;
-        }
+                int tmp = arr[i]; counter++;
+                arr[i] = arr[j]; counter++;
+                arr[j] = tmp; counter++;
+            } counter++;
+            i++; counter++;
+            j--; counter++;
+        } counter++;
+
+        counter++;
     } while (i <= j);
 
     if (i < last) {
-        array_sort(arr, i, last);
-    }
+        counter += array_sort_cost(arr, i, last);
+    } counter++;
     if (first < j) {
-        array_sort(arr, first,j);
-    }
+        counter += array_sort_cost(arr, first, j);
+    } counter++;
+    return counter;
 }
 
 static void sort_generated_array(array_generator generator, int size)
 {
+    int cost;
     array arr = array_init(generator, size);
 
 #ifdef PRINT
@@ -90,12 +95,12 @@ static void sort_generated_array(array_generator generator, int size)
     printf("\n");
 #endif
 
-    array_sort(arr, 0, size - 1);
+    cost = array_sort_cost(arr, 0, size - 1);
 #ifdef PRINT
     array_print(arr, size);
     printf("\n");
 #else
-    /* printf("%d\n", cost); */
+    printf("%d\n", cost);
 #endif
 
     free(arr);
@@ -114,11 +119,11 @@ int main(int argc, char **argv)
     srand(time(NULL));
 
 /* #ifdef MIN_TIME */
-/*     sort_generated_array(array_increasing_generator, size); */
+    sort_generated_array(array_increasing_generator, size);
 /* #elifdef MAX_TIME */
 /*     sort_generated_array(array_decreasing_generator, size); */
 /* #else */
-    sort_generated_array(array_random_generator, size);
+    /* sort_generated_array(array_random_generator, size); */
 /* #endif */
     return 0;
 }
