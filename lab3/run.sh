@@ -17,7 +17,7 @@ fi
 gcc -o "$EXECUTABLE" main.c $compilation_type
 
 echo "n T(n)"
-for n in $(seq 100 100 1000); do
+for n in $(seq 100 100 10000); do
     if [ -z "$compilation_type" ]; then
         result=$(average "$n")
     else

@@ -54,7 +54,11 @@ static int array_sort_cost(array arr, int first, int last)
 
     i = first; counter++;
     j = last; counter++;
+#ifdef MAX_TIME
+    x = arr[first]; counter++;
+#else
     x = arr[(first + last) / 2]; counter += 3;
+#endif
     do {
         while (arr[i] < x) { counter++;
             i++; counter++;
