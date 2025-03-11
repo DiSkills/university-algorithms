@@ -4,10 +4,6 @@
 
 typedef char **picture;
 
-struct point {
-    int x, y;
-};
-
 static int randint(int a, int b)
 {
     return rand() % (b - a + 1) + a;
@@ -43,68 +39,67 @@ static picture picture_init(int size)
     return pic;
 }
 
-static void picture_print(picture pic, int size)
+static int strip(char *arr, int size, int *start, int *end)
 {
-    int i, j;
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
-            printf("%c%c", pic[i][j], j != size - 1 ? ' ' : '\n');
-        }
-    }
+    int counter = 0;
+
+    *start = 0; counter++;
+    while (*start < size && arr[*start] == 0) { counter += 2;
+        (*start)++; counter++;
+    } counter += (*start < size) ? 2 : 1;
+
+    *end = size - 1; counter += 2;
+    while (*end >= 0 && arr[*end] == 0) { counter += 2;
+        (*end)--; counter++;
+    } counter += (*end >= 0) ? 2 : 1;
+
+    return counter;
 }
 
-static void strip(char *arr, int size, int *start, int *end)
+static int rectangle(picture pic, int size,
+        int *x1, int *y1, int *x2, int *y2, int *pcounter)
 {
-    *start = 0;
-    while (*start < size && arr[*start] == 0) {
-        (*start)++;
-    }
-    *end = size - 1;
-    while (*end >= 0 && arr[*end] == 0) {
-        (*end)--;
-    }
-}
-
-static int rectangle(picture pic, int size, int *x1, int *y1, int *x2, int *y2)
-{
+    int counter = 0;
     int exists, i, j;
     char *strs, *cols;
 
-    strs = calloc(size, sizeof(*strs));
-    cols = calloc(size, sizeof(*cols));
+    strs = calloc(size, sizeof(*strs)); counter += size;
+    cols = calloc(size, sizeof(*cols)); counter += size;
 
-    exists = 0;
+    exists = 0; counter++;
     for (i = 0; i < size; i++) {
         for (j = 0; j < size; j++) {
             if (pic[i][j] == '1') {
-                strs[i] = 1;
-                cols[j] = 1;
-                exists = 1;
-            }
+                strs[i] = 1; counter++;
+                cols[j] = 1; counter++;
+                exists = 1; counter++;
+            } counter++;
         }
     }
     if (exists) {
-        strip(cols, size, x1, x2);
-        strip(strs, size, y1, y2);
-    }
+        counter += strip(cols, size, x1, x2);
+        counter += strip(strs, size, y1, y2);
+    } counter++;
     free(strs);
     free(cols);
+    *pcounter += counter;
     return exists;
 }
 
-static int picture_recognize(picture pic, int size,
-        struct point *p1, struct point *p2)
+static int picture_recognize(picture pic, int size, int *pcounter)
 {
+    int counter = 0;
     int s, i, j, exists, x1, y1, x2, y2;
 
-    exists = rectangle(pic, size, &x1, &y1, &x2, &y2);
+    exists = rectangle(pic, size, &x1, &y1, &x2, &y2, pcounter);
     if (!exists) {
         return 0;
     }
 
-    s = y2 - y1 + 1;
+    s = y2 - y1 + 1; counter += 3;
     for (i = y1; i <= y2; i++) {
         for (j = x1; j < x2; j++) {
+            counter += 10;
             if (i - y1 > s / 2 && j == x1 + i - y1 - s / 2 - 1) {
                 if (pic[i][j] != '1') {
                     return 0;
@@ -114,15 +109,12 @@ static int picture_recognize(picture pic, int size,
             }
         }
 
+        counter++;
         if (pic[i][x2] != '1') {
             return 0;
         }
     }
-    p1->x = x1;
-    p1->y = y1;
-
-    p2->x = x2;
-    p2->y = y2;
+    *pcounter += counter;
     return 1;
 }
 
@@ -136,9 +128,9 @@ static void picture_del(picture pic, int size)
 
 int main(int argc, char **argv)
 {
-    int size, exists;
+    int counter = 0;
+    int size;
     picture pic;
-    struct point p1, p2;
 
     if (argc != 2) {
         fprintf(stderr, "Expected: %s <size>\n", argv[0]);
@@ -150,14 +142,8 @@ int main(int argc, char **argv)
 
     pic = picture_init(size);
 
-    picture_print(pic, size);
-
-    exists = picture_recognize(pic, size, &p1, &p2);
-    if (exists) {
-        printf("%d %d %d %d\n", p1.x, p1.y, p2.x, p2.y);
-    } else {
-        printf("The image is not found\n");
-    }
+    picture_recognize(pic, size, &counter);
+    printf("%d\n", counter);
 
     picture_del(pic, size);
     free(pic);
