@@ -4,41 +4,15 @@
 
 #include "number.h"
 
-static int digit_to_int(char c)
-{
-    return c - (c <= '9' ? '0' : 'a' - 10);
-}
-
-static char int_to_digit(int n)
-{
-    return n + (n <= 9 ? '0' : 'a' - 10);
-}
-
-static int number_compare(const struct number *n1, const struct number *n2)
-{
-    int i, size;
-
-    if (n1->sign != n2->sign) {
-        return (n1->sign == '-') ? -1 : 1;
-    }
-    size = n1->size;
-
-    for (i = size - 1; i >= 0; i--) {
-        if (n1->digits[i] != n2->digits[i]) {
-            return n1->digits[i] < n2->digits[i] ? -1 : 1;
-        }
-    }
-    return 0;
-}
+#define DIGIT_TO_INT(C) ((C) - ((C) <= '9' ? '0' : 'a' - 10))
+#define INT_TO_DIGIT(N) ((N) + ((N) <= 9 ? '0' : 'a' - 10))
 
 struct number *number_init(int size)
 {
     struct number *n = malloc(sizeof(*n));
-
     n->size = size;
     n->digits = calloc(size, sizeof(char));
     n->sign = '+';
-
     return n;
 }
 
@@ -50,19 +24,21 @@ void number_del(struct number *n)
     n->sign = '+';
 }
 
-void number_from_string(struct number *n, const char *str)
+struct number *number_from_string(const char *str)
 {
     char *digits;
     const char *s;
+    struct number *n;
+    int size = strlen(str) - 1;
 
+    n = number_init(size);
     digits = n->digits;
-    s = str + strlen(str) - 1;
-    while (s > str) {
-        *digits = digit_to_int(*s);
+    for (s = str + size; s > str; s--) {
+        *digits = DIGIT_TO_INT(*s);
         digits++;
-        s--;
     }
     n->sign = str[0];
+    return n;
 }
 
 void number_print(const struct number *n)
@@ -71,74 +47,37 @@ void number_print(const struct number *n)
 
     putchar(n->sign);
     for (digits = n->digits + n->size - 1; digits >= n->digits; digits--) {
-        putchar(int_to_digit(*digits));
+        putchar(INT_TO_DIGIT(*digits));
     }
 }
 
-struct number *number_add(const struct number *n1, const struct number *n2)
+static void number_strip(struct number *n)
 {
-    int i, carry, size;
-    struct number *sum;
-
-    if (n1->sign != n2->sign) {
-        struct number tmp = n1->sign == '-' ? *n1 : *n2;
-        tmp.sign = '+';
-        return number_sub(n1->sign == '+' ? n1 : n2, &tmp);
+    int i = n->size - 1;
+    while (i > 0 && n->digits[i] == 0) {
+        i--;
     }
-    size = n1->size;
-    sum = number_init(size + 1);
-
-    carry = 0;
-    for (i = 0; i < size; i++) {
-        int s = n1->digits[i] + n2->digits[i] + carry;
-        sum->digits[i] = s % NUMBER_BASE;
-        carry = s / NUMBER_BASE;
-    }
-    sum->digits[i] = carry;
-    sum->sign = n1->sign;
-    return sum;
+    n->size = i + 1;
+    n->digits = realloc(n->digits, n->size);
 }
 
-struct number *number_sub(const struct number *n1, const struct number *n2)
+struct number *number__binary_operation(number_binop function,
+        const struct number *n1, const struct number *n2)
 {
-    int i, size;
-    struct number *difference;
+    struct number *num1, *num2, *res;
+    int size = MAX(n1->size, n2->size);
 
-    if (n1->sign != n2->sign) {
-        struct number tmp = *n2;
-        tmp.sign = n1->sign;
-        return number_add(n1, &tmp);
-    } else if (n2->sign == '-') {
-        struct number tmp1 = *n1, tmp2 = *n2;
-        tmp1.sign = '+';
-        tmp2.sign = '+';
-        return number_sub(&tmp2, &tmp1);
-    }
-    size = n1->size;
-    difference = number_init(size + 1);
+    num1 = number_init(size);
+    memcpy(num1->digits, n1->digits, n1->size);
+    num2 = number_init(size);
+    memcpy(num2->digits, n2->digits, n2->size);
 
-    if (number_compare(n1, n2) < 0) {
-        const struct number *tmp = n1;
-        n1 = n2;
-        n2 = tmp;
-        difference->sign = '-';
-    }
+    res = function(num1, n1->sign, num2, n2->sign);
+    number_strip(res);
 
-    for (i = 0; i < size; i++) {
-        int diff = difference->digits[i] + n1->digits[i] - n2->digits[i];
-        if (diff < 0) {
-            diff += NUMBER_BASE;
-            difference->digits[i + 1] -= 1;
-        }
-        difference->digits[i] = diff;
-    }
-    return difference;
-}
-
-struct number *number_shift_left(const struct number *n, int shift)
-{
-    struct number *sh = number_init(n->size + shift);
-    sh->sign = n->sign;
-    memcpy(sh->digits + shift, n->digits, n->size);
-    return sh;
+    number_del(num1);
+    free(num1);
+    number_del(num2);
+    free(num2);
+    return res;
 }
