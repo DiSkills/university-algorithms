@@ -8,6 +8,7 @@
 #define INT_TO_DIGIT(N) ((N) + ((N) <= 9 ? '0' : 'a' - 10))
 
 long long counter = 0; /* Bad, very bad... I hate myself!!! */
+/* https://www.youtube.com/watch?v=lIX3hecWFAY */
 
 struct number *number_init(int size)
 {

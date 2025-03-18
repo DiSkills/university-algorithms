@@ -15,6 +15,7 @@
     } while (0)
 
 extern long long counter; /* Bad, very bad... I hate myself!!! */
+/* https://www.youtube.com/watch?v=lIX3hecWFAY */
 
 struct number {
     char sign;
