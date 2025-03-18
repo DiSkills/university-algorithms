@@ -14,6 +14,8 @@
         (B) = tmp;                                                           \
     } while (0)
 
+extern long long counter; /* Bad, very bad... I hate myself!!! */
+
 struct number {
     char sign;
     char *digits;

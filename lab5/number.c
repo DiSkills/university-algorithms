@@ -7,6 +7,8 @@
 #define DIGIT_TO_INT(C) ((C) - ((C) <= '9' ? '0' : 'a' - 10))
 #define INT_TO_DIGIT(N) ((N) + ((N) <= 9 ? '0' : 'a' - 10))
 
+long long counter = 0; /* Bad, very bad... I hate myself!!! */
+
 struct number *number_init(int size)
 {
     struct number *n = malloc(sizeof(*n));

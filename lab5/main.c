@@ -5,11 +5,14 @@
 
 #undef BINARY_OPERATION
 #undef UNARY_OPERATION
+#undef COUNTING
 
 #if defined(ADD) || defined(SUB) || defined(MUL)
 #define BINARY_OPERATION
 #elif defined(SHL)
 #define UNARY_OPERATION
+#else
+#define COUNTING
 #endif
 
 #ifdef BINARY_OPERATION
@@ -62,6 +65,26 @@ static void demo_unary_operation(unop function, const char *c,
 }
 #endif
 
+#ifdef COUNTING
+static void mul(const char *s1, const char *s2)
+{
+    struct number *n1, *n2, *res;
+
+    n1 = number_from_string(s1);
+    n2 = number_from_string(s2);
+    res = number_mul(n1, n2);
+
+    printf("%lld\n", counter);
+
+    number_del(n1);
+    free(n1);
+    number_del(n2);
+    free(n2);
+    number_del(res);
+    free(res);
+}
+#endif
+
 int main(int argc, char **argv)
 {
 #ifdef BINARY_OPERATION
@@ -97,6 +120,9 @@ int main(int argc, char **argv)
     c = "<<";
 #   endif
     demo_unary_operation(operation, c, argv[1], atoi(argv[2]));
+#endif
+#ifdef COUNTING
+    mul(argv[1], argv[2]);
 #endif
     return 0;
 }

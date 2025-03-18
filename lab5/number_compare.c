@@ -7,16 +7,21 @@ int number__compare(const struct number *n1, const struct number *n2)
 {
     int i, size;
 
+    counter++;
     if (n1->sign != n2->sign) {
+        counter += 2;
         return (n1->sign == '-') ? -1 : 1;
     }
 
     size = n1->size;
     for (i = size - 1; i >= 0; i--) {
+        counter++;
         if (n1->digits[i] != n2->digits[i]) {
+            counter += 2;
             return n1->digits[i] < n2->digits[i] ? -1 : 1;
         }
     }
+    counter++;
     return 0;
 }
 
