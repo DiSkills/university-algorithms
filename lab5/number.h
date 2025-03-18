@@ -33,10 +33,12 @@ struct number *number__binary_operation(number_binop function,
 struct number *number__add(const struct number *n1, const struct number *n2);
 struct number *number__sub(const struct number *n1, const struct number *n2);
 int number__compare(const struct number *n1, const struct number *n2);
+struct number *number__mul(const struct number *n1, const struct number *n2);
 
 struct number *number_add(const struct number *n1, const struct number *n2);
 struct number *number_sub(const struct number *n1, const struct number *n2);
 int number_compare(const struct number *n1, const struct number *n2);
 struct number *number_shift_left(const struct number *n, int shift);
+struct number *number_mul(const struct number *n1, const struct number *n2);
 
 #endif
