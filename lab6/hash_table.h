@@ -5,10 +5,15 @@
 #define HASH_TABLE_SIZE 2000
 #endif
 
+typedef int (*hash_function)(const char *);
+
 struct hash_table {
     char *data[HASH_TABLE_SIZE];
     int size;
-    int (*hash)(const char *);
+    hash_function hash;
+#ifdef RANDOM_REHASHING
+    int indexes[HASH_TABLE_SIZE];
+#endif
 };
 
 struct hash_table *hash_table_init();
