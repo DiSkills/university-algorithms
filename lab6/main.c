@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "hash_table.h"
 
@@ -33,6 +34,7 @@ int main(int argc, char **argv)
 {
     double load_factor;
     struct hash_table *table;
+    int counter = 0;
 
     if (argc != 2) {
         fprintf(stderr, "Expected: %s <load-factor>\n", argv[0]);
@@ -40,11 +42,13 @@ int main(int argc, char **argv)
     }
     load_factor = atof(argv[1]);
 
+    srand(time(NULL));
+
     table = hash_table_init();
     fill(table, load_factor);
 
-    hash_table_print(table);
-    printf("%d\n", table->size);
+    hash_table_add_counting(table, generate(), &counter);
+    printf("%d\n", counter);
 
     hash_table_del(table);
     free(table);

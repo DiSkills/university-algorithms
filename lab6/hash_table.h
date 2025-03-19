@@ -14,6 +14,7 @@ struct hash_table {
 struct hash_table *hash_table_init();
 void hash_table_del(struct hash_table *table);
 void hash_table_print(const struct hash_table *table);
+int hash_table_add_counting(struct hash_table *table, char *s, int *pcounter);
 int hash_table_add(struct hash_table *table, char *s);
 
 #endif

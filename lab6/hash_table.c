@@ -42,7 +42,7 @@ void hash_table_print(const struct hash_table *table)
     }
 }
 
-int hash_table_add(struct hash_table *table, char *s)
+int hash_table_add_counting(struct hash_table *table, char *s, int *pcounter)
 {
     int i, h;
 
@@ -54,6 +54,13 @@ int hash_table_add(struct hash_table *table, char *s)
             table->size++;
             return 1;
         }
+        (*pcounter)++;
     }
     return 0;
+}
+
+int hash_table_add(struct hash_table *table, char *s)
+{
+    int counter = 0;
+    return hash_table_add_counting(table, s, &counter);
 }
