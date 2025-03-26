@@ -41,7 +41,7 @@ static void matrix_print(const matrix_t matrix, int size)
 
 static int graph_is_simple_cycle(const matrix_t matrix, int size)
 {
-    int i, j;
+    int i, j, count, vertex;
     for (i = 0; i < size; i++) {
         int sum[2] = { 0, 0 };
         for (j = 0; j < size; j++) {
@@ -52,7 +52,19 @@ static int graph_is_simple_cycle(const matrix_t matrix, int size)
             return 0;
         }
     }
-    return 1;
+
+    vertex = 0;
+    count = 0;
+    do {
+        for (j = 0; j < size; j++) {
+            if (matrix[vertex][j]) {
+                vertex = j;
+                count++;
+                break;
+            }
+        }
+    } while (vertex != 0);
+    return count == size ? 1 : 0;
 }
 
 int main(int argc, char **argv)
