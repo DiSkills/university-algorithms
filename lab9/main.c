@@ -6,7 +6,7 @@
 #define COLOR_YELLOW "\x1b[33m"
 #define NOCOLOR "\x1b[0m"
 
-#define IDENTIFIER_SET "0123456789abcdefghijklmnopqrstuvwxyz"
+#define DIGITS_SET "0123456789"
 
 enum statuses {
     unexpected_eol = 1,
@@ -19,9 +19,7 @@ struct parser {
     jmp_buf env;
 };
 
-static void parse_tree(struct parser *pars);
-
-static int check_char(struct parser *pars, char c)
+static int check_char(const struct parser *pars, char c)
 {
     return pars->s[pars->pos] == c;
 }
@@ -38,7 +36,7 @@ static void parse_char(struct parser *pars, char c)
     pars->pos++;
 }
 
-static int check_char_set(struct parser *pars, const char *set)
+static int check_char_set(const struct parser *pars, const char *set)
 {
     char c = pars->s[pars->pos];
     return c && strchr(set, c) ? 1 : 0;
@@ -56,27 +54,42 @@ static void parse_char_set(struct parser *pars, const char *set)
     pars->pos++;
 }
 
-static void parse_root(struct parser *pars)
+static void parse_unsigned(struct parser *pars)
 {
-    while (check_char_set(pars, IDENTIFIER_SET)) {
-        parse_char_set(pars, IDENTIFIER_SET);
-    }
+    do {
+        parse_char_set(pars, DIGITS_SET);
+    } while (check_char_set(pars, DIGITS_SET));
 }
 
-static void parse_subtree(struct parser *pars)
+static void parse_int(struct parser *pars)
+{
+    if (check_char(pars, '-')) {
+        parse_char(pars, '-');
+    }
+    parse_unsigned(pars);
+}
+
+static void parse_inversion(struct parser *pars)
 {
     if (check_char(pars, '(')) {
         parse_char(pars, '(');
-        parse_tree(pars);
+        parse_unsigned(pars);
+        parse_char(pars, '+');
+        parse_inversion(pars);
         parse_char(pars, ')');
+    } else {
+        parse_unsigned(pars);
     }
+    parse_char(pars, '~');
 }
 
-static void parse_tree(struct parser *pars)
+static void parse_fraction(struct parser *pars)
 {
-    parse_subtree(pars);
-    parse_root(pars);
-    parse_subtree(pars);
+    parse_int(pars);
+    if (check_char(pars, '+')) {
+        parse_char(pars, '+');
+        parse_inversion(pars);
+    }
 }
 
 static int parser_run(const char *s)
@@ -90,12 +103,12 @@ static int parser_run(const char *s)
     res = setjmp(pars.env);
     switch (res) {
     case 0:
-        parse_tree(&pars);
+        parse_fraction(&pars);
         if (strlen(s) == pars.pos) {
             return 0;
         }
         fprintf(stderr, "The line contains extra characters:\n"
-                "%.*s" COLOR_YELLOW "%c" "%s\n",
+                "%.*s" COLOR_YELLOW "%c" "%s" NOCOLOR "\n",
                 pars.pos, s, s[pars.pos], s + pars.pos + 1);
         break;
     case unexpected_eol:
