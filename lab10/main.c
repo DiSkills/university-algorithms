@@ -18,7 +18,8 @@ int main(int argc, char **argv)
     graph_generate(g);
     h = graph_shuffle(g);
 
-    printf("%d\n", graph_is_isomorphic(g, h));
+    graph_is_isomorphic(g, h);
+    printf("%lld\n", counter);
 
     graph_del(g);
     free(g);

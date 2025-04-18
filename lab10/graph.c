@@ -4,6 +4,8 @@
 
 #include "graph.h"
 
+long long counter = 0;
+
 #define SWAP(A, B)                                                           \
     do {                                                                     \
         int tmp = (A);                                                       \
@@ -105,11 +107,14 @@ static int graph_equals(const struct graph *g,
     int i, j;
     for (i = 0; i < g->size; i++) {
         for (j = 0; j < g->size; j++) {
+            counter++;
             if (g->matrix[i][j] != h->matrix[transform[i]][transform[j]]) {
+                counter++;
                 return 0;
             }
         }
     }
+    counter++;
     return 1;
 }
 
@@ -118,19 +123,24 @@ static int permute(const struct graph *g, const struct graph *h,
 {
     int i;
 
-    if (l == r) {
+    counter++;
+    if (l == r) { counter++;
         return graph_equals(g, h, transform);
     }
     for (i = l; i <= r; i++) {
         int res;
 
-        SWAP(transform[l], transform[i]);
-        res = permute(g, h, transform, l + 1, r);
-        if (res) {
+        SWAP(transform[l], transform[i]); counter += 3;
+        res = permute(g, h, transform, l + 1, r); counter += 2;
+
+        counter++;
+        if (res) { counter++;
             return 1;
         }
-        SWAP(transform[l], transform[i]);
+
+        SWAP(transform[l], transform[i]); counter += 3;
     }
+    counter++;
     return 0;
 }
 
@@ -138,13 +148,14 @@ int graph_is_isomorphic(const struct graph *g, const struct graph *h)
 {
     int *transform, size, res;
 
-    if (h->size != g->size) {
+    counter++;
+    if (h->size != g->size) { counter++;
         return 0;
     }
-    size = g->size;
+    size = g->size; counter++;
 
-    transform = transform_init(size);
-    res = permute(g, h, transform, 0, size - 1);
+    transform = transform_init(size); counter += size;
+    res = permute(g, h, transform, 0, size - 1); counter += 2;
     free(transform);
     return res;
 }
