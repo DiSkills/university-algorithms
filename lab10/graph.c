@@ -83,5 +83,6 @@ struct graph *graph_shuffle(const struct graph *g)
             h->matrix[transform[i]][transform[j]] = g->matrix[i][j];
         }
     }
+    free(transform);
     return h;
 }
