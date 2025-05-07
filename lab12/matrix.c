@@ -3,47 +3,52 @@
 
 #include "matrix.h"
 
-matrix_t matrix_init(int size)
+struct matrix *matrix_init(int size)
 {
     int i;
+    struct matrix *m = malloc(sizeof(*m));
 
-    matrix_t matrix = malloc(sizeof(*matrix) * size);
+    m->size = size;
+    m->data = malloc(sizeof(*m->data) * size);
     for (i = 0; i < size; i++) {
-        matrix[i] = malloc(sizeof(*matrix[i]) * size);
+        m->data[i] = malloc(sizeof(*m->data[i]) * size);
     }
-    return matrix;
+    return m;
 }
 
-void matrix_fill(matrix_t matrix, int size)
+void matrix_fill(struct matrix *m)
 {
     int i, j;
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
-            matrix[i][j] = rand() % 100;
+    for (i = 0; i < m->size; i++) {
+        for (j = 0; j < m->size; j++) {
+            m->data[i][j] = rand() % 100;
         }
     }
 }
 
-void matrix_del(matrix_t matrix, int size)
+void matrix_del(struct matrix *m)
 {
     int i;
-
-    for (i = 0; i < size; i++) {
-        free(matrix[i]);
+    for (i = 0; i < m->size; i++) {
+        free(m->data[i]);
     }
+    free(m->data);
+    m->data = NULL;
+    m->size = 0;
 }
 
-void matrix_print(const matrix_t matrix, int size)
+void matrix_print(const struct matrix *m)
 {
     int i, j;
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
-            printf(" %5d", matrix[i][j]);
+    for (i = 0; i < m->size; i++) {
+        for (j = 0; j < m->size; j++) {
+            printf(" %5d", m->data[i][j]);
         }
         printf("\n");
     }
 }
 
+#if 0
 static matrix_t matrix_add(const matrix_t a, const matrix_t b, int size)
 {
     int i, j;
@@ -69,3 +74,14 @@ static matrix_t matrix_sub(const matrix_t a, const matrix_t b, int size)
     }
     return c;
 }
+
+static matrix_t matrix_block(const matrix_t m, int size,
+        int row, int col, int s)
+{
+    int i, j;
+    for (i = row; i < row + s; i++) {
+        for (j = col; j < col + s; j++) {
+        }
+    }
+}
+#endif

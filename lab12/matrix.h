@@ -1,11 +1,14 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-typedef int **matrix_t;
+struct matrix {
+    int **data;
+    int size;
+};
 
-matrix_t matrix_init(int size);
-void matrix_fill(matrix_t matrix, int size);
-void matrix_del(matrix_t matrix, int size);
-void matrix_print(const matrix_t matrix, int size);
+struct matrix *matrix_init(int size);
+void matrix_fill(struct matrix *m);
+void matrix_del(struct matrix *m);
+void matrix_print(const struct matrix *m);
 
 #endif
