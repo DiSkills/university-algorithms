@@ -1,4 +1,4 @@
-SRCMODULES = matrix.c
+SRCMODULES = matrix.c mul.c
 OBJMODULES = $(SRCMODULES:.c=.o)
 
 CC = gcc

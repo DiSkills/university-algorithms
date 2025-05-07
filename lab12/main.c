@@ -7,7 +7,7 @@
 int main(int argc, char **argv)
 {
     int size;
-    struct matrix *a;
+    struct matrix *a, *b, *c;
 
     if (argc != 2) {
         fprintf(stderr, "Expected: %s <size>\n", argv[0]);
@@ -19,10 +19,22 @@ int main(int argc, char **argv)
 
     a = matrix_init(size);
     matrix_fill(a);
+    b = matrix_init(size);
+    matrix_fill(b);
 
     matrix_print(a);
+    matrix_print(b);
+
+    matrix_mul(a, b);
+#if 0
+    matrix_print(c);
+    matrix_del(c);
+    free(c);
+#endif
 
     matrix_del(a);
     free(a);
+    matrix_del(b);
+    free(b);
     return 0;
 }
