@@ -22,13 +22,11 @@ int main(int argc, char **argv)
     b = matrix_init(size);
     matrix_fill(b);
 
-    matrix_print(a);
-    matrix_print(b);
-
     c = matrix_mul(a, b);
-    matrix_print(c);
     matrix_del(c);
     free(c);
+
+    printf("%lld\n", counter);
 
     matrix_del(a);
     free(a);

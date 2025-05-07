@@ -6,6 +6,9 @@ struct matrix {
     int size;
 };
 
+extern long long counter; /* Bad, very bad... I hate myself!!! */
+/* https://www.youtube.com/watch?v=lIX3hecWFAY */
+
 struct matrix *matrix_init(int size);
 void matrix_fill(struct matrix *m);
 void matrix_del(struct matrix *m);

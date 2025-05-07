@@ -3,6 +3,8 @@
 
 #include "matrix.h"
 
+long long counter = 0;
+
 struct matrix *matrix_init(int size)
 {
     int i;
@@ -56,6 +58,7 @@ struct matrix *matrix_add(const struct matrix *a, const struct matrix *b)
     for (i = 0; i < a->size; i++) {
         for (j = 0; j < a->size; j++) {
             c->data[i][j] = a->data[i][j] + b->data[i][j];
+            counter += 2;
         }
     }
     return c;
@@ -69,6 +72,7 @@ struct matrix *matrix_sub(const struct matrix *a, const struct matrix *b)
     for (i = 0; i < a->size; i++) {
         for (j = 0; j < a->size; j++) {
             c->data[i][j] = a->data[i][j] - b->data[i][j];
+            counter += 2;
         }
     }
     return c;

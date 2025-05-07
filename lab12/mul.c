@@ -2,6 +2,12 @@
 
 #include "matrix.h"
 
+#define BLOCK_DEL(T)                                                         \
+    do {                                                                     \
+        matrix_del(T);                                                       \
+        free(T);                                                             \
+    } while(0)
+
 #define BLOCKS_INIT(M)                                                       \
     do {                                                                     \
         M##11 = matrix_block(M, 0, 0, size);                                 \
@@ -12,21 +18,11 @@
 
 #define BLOCKS_DEL(M)                                                        \
     do {                                                                     \
-        matrix_del(M##11);                                                   \
-        matrix_del(M##12);                                                   \
-        matrix_del(M##21);                                                   \
-        matrix_del(M##22);                                                   \
-        free(M##11);                                                         \
-        free(M##12);                                                         \
-        free(M##21);                                                         \
-        free(M##22);                                                         \
+        BLOCK_DEL(M##11);                                                    \
+        BLOCK_DEL(M##12);                                                    \
+        BLOCK_DEL(M##21);                                                    \
+        BLOCK_DEL(M##22);                                                    \
     } while (0)
-
-#define BLOCK_DEL(T)                                                         \
-    do {                                                                     \
-        matrix_del(T);                                                       \
-        free(T);                                                             \
-    } while(0)
 
 #define BLOCKS_TMP_DEL(T1, T2)                                               \
     do {                                                                     \
@@ -144,15 +140,16 @@
 
 struct matrix *matrix_mul(const struct matrix *a, const struct matrix *b)
 {
-    int size = a->size / 2;
+    int size = a->size / 2; counter += 2;
     struct matrix *c,
                   *m1, *m2, *m3, *m4, *m5, *m6, *m7,
                   *a11, *a12, *a21, *a22,
                   *b11, *b12, *b21, *b22;
     
+    counter++;
     if (a->size == 1) {
         c = matrix_init(1);
-        c->data[0][0] = a->data[0][0] * b->data[0][0];
+        c->data[0][0] = a->data[0][0] * b->data[0][0]; counter += 2;
         return c;
     }
 
