@@ -48,8 +48,7 @@ void matrix_print(const struct matrix *m)
     }
 }
 
-static struct matrix *matrix_add(const struct matrix *a,
-        const struct matrix *b)
+struct matrix *matrix_add(const struct matrix *a, const struct matrix *b)
 {
     int i, j;
     struct matrix *c = matrix_init(a->size);
@@ -62,8 +61,7 @@ static struct matrix *matrix_add(const struct matrix *a,
     return c;
 }
 
-static struct matrix *matrix_sub(const struct matrix *a,
-        const struct matrix *b)
+struct matrix *matrix_sub(const struct matrix *a, const struct matrix *b)
 {
     int i, j;
     struct matrix *c = matrix_init(a->size);
@@ -76,14 +74,16 @@ static struct matrix *matrix_sub(const struct matrix *a,
     return c;
 }
 
-#if 0
-static matrix_t matrix_block(const matrix_t m, int size,
-        int row, int col, int s)
+struct matrix *matrix_block(const struct matrix *m,
+        int row, int col, int size)
 {
     int i, j;
-    for (i = row; i < row + s; i++) {
-        for (j = col; j < col + s; j++) {
+    struct matrix *blck = matrix_init(size);
+
+    for (i = 0; i < size; i++) {
+        for (j = 0; j < size; j++) {
+            blck->data[i][j] = m->data[row + i][col + j];
         }
     }
+    return blck;
 }
-#endif

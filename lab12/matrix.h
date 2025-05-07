@@ -11,4 +11,9 @@ void matrix_fill(struct matrix *m);
 void matrix_del(struct matrix *m);
 void matrix_print(const struct matrix *m);
 
+struct matrix *matrix_add(const struct matrix *a, const struct matrix *b);
+struct matrix *matrix_sub(const struct matrix *a, const struct matrix *b);
+struct matrix *matrix_block(const struct matrix *m,
+        int row, int col, int size);
+
 #endif
