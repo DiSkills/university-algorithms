@@ -26,8 +26,8 @@
 
 #define BLOCKS_TMP_DEL(T1, T2)                                               \
     do {                                                                     \
-        BLOCK_DEL(T1);                                                   \
-        BLOCK_DEL(T2);                                                   \
+        BLOCK_DEL(T1);                                                       \
+        BLOCK_DEL(T2);                                                       \
     } while (0)
 
 #define M1                                                                   \
