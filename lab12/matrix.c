@@ -48,33 +48,35 @@ void matrix_print(const struct matrix *m)
     }
 }
 
+static struct matrix *matrix_add(const struct matrix *a,
+        const struct matrix *b)
+{
+    int i, j;
+    struct matrix *c = matrix_init(a->size);
+
+    for (i = 0; i < a->size; i++) {
+        for (j = 0; j < a->size; j++) {
+            c->data[i][j] = a->data[i][j] + b->data[i][j];
+        }
+    }
+    return c;
+}
+
+static struct matrix *matrix_sub(const struct matrix *a,
+        const struct matrix *b)
+{
+    int i, j;
+    struct matrix *c = matrix_init(a->size);
+
+    for (i = 0; i < a->size; i++) {
+        for (j = 0; j < a->size; j++) {
+            c->data[i][j] = a->data[i][j] - b->data[i][j];
+        }
+    }
+    return c;
+}
+
 #if 0
-static matrix_t matrix_add(const matrix_t a, const matrix_t b, int size)
-{
-    int i, j;
-
-    matrix_t c = matrix_init(size);
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
-            c[i][j] = a[i][j] + b[i][j];
-        }
-    }
-    return c;
-}
-
-static matrix_t matrix_sub(const matrix_t a, const matrix_t b, int size)
-{
-    int i, j;
-
-    matrix_t c = matrix_init(size);
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
-            c[i][j] = a[i][j] - b[i][j];
-        }
-    }
-    return c;
-}
-
 static matrix_t matrix_block(const matrix_t m, int size,
         int row, int col, int s)
 {
