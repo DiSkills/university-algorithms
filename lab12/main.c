@@ -25,12 +25,10 @@ int main(int argc, char **argv)
     matrix_print(a);
     matrix_print(b);
 
-    matrix_mul(a, b);
-#if 0
+    c = matrix_mul(a, b);
     matrix_print(c);
     matrix_del(c);
     free(c);
-#endif
 
     matrix_del(a);
     free(a);

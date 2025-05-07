@@ -15,6 +15,8 @@ struct matrix *matrix_add(const struct matrix *a, const struct matrix *b);
 struct matrix *matrix_sub(const struct matrix *a, const struct matrix *b);
 struct matrix *matrix_block(const struct matrix *m,
         int row, int col, int size);
+void matrix_set_block(struct matrix *m, const struct matrix *blck,
+        int row, int col);
 struct matrix *matrix_mul(const struct matrix *a, const struct matrix *b);
 
 #endif

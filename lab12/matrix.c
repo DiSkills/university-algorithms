@@ -87,3 +87,14 @@ struct matrix *matrix_block(const struct matrix *m,
     }
     return blck;
 }
+
+void matrix_set_block(struct matrix *m, const struct matrix *blck,
+        int row, int col)
+{
+    int i, j;
+    for (i = 0; i < blck->size; i++) {
+        for (j = 0; j < blck->size; j++) {
+             m->data[row + i][col + j] = blck->data[i][j];
+        }
+    }
+}
